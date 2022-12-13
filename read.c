@@ -6,7 +6,7 @@
 /*   By: aestraic <aestraic@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/16 12:15:28 by aestraic          #+#    #+#             */
-/*   Updated: 2022/12/07 11:14:58 by aestraic         ###   ########.fr       */
+/*   Updated: 2022/12/13 15:21:42 by aestraic         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,7 +74,7 @@ void	read_map_vertices(int fd, t_readmap *map_data)
  * @param returns an integer/size_t matrix in this form
  * [[x1,y1,z1], [x2,y2,z2]], [x3,y3,z3], ....]
  */
-void	xyz_pos(int fd, size_t row, size_t col,t_readmap *map_data)
+void	xyz_pos(int fd, size_t row, size_t col, t_readmap *map_data)
 {
 	char	*line;
 	int		**matrix;
@@ -96,18 +96,18 @@ void	xyz_pos(int fd, size_t row, size_t col,t_readmap *map_data)
 			values[1] = map_data->offset_y + row * map_data->delta;
 			values[2] = ft_atoi(split[col++]);
 			matrix[node ++] = values;
-			//ft_printf("X: %d  \tY: %d  \tZ: %d\n", values[0], values[1], values[2]);
 		}
 		row ++;
 		fr_dblsgl_p((void **)split, (void *)line, map_data->count_x);
 	map_data->values_matrix = matrix;
 	}
 }
+
 /*
 reads the map with gnl and stores the the positions of nodes
 and its values in a matrix
 */
-void	get_map_information(char *map_name,t_readmap *map_data)
+void	get_map_information(char *map_name, t_readmap *map_data)
 {
 	int		fd;
 	char	*path;
@@ -117,18 +117,11 @@ void	get_map_information(char *map_name,t_readmap *map_data)
 	read_map_vertices(fd, map_data);
 	close(fd);
 	determine_delta(map_data);
-	determine_center(map_data);
-	
-	ft_printf("\n----------MAP Data----------\n");
-	ft_printf("DELTA: %d\t OFFSET_X: %d\t OFFSET_Y: %d\n",\
-	map_data->delta, map_data->offset_x, map_data->offset_y);
-	ft_printf("CENTER_X: %d\t CENTER_Y: %d\n",\
-	map_data->center_x, map_data->center_y);
-	ft_printf("COUNT_X: %d\t COUNT_Y: %d",\
-	map_data->count_x, map_data->count_y);
-	
 	fd = open(path, O_RDONLY);
 	xyz_pos(fd, 0, 0, map_data);
-	close(fd);	
+	close(fd);
+	fd = open(path, O_RDONLY);
+	read_color(fd, 0, 0, map_data);
+	close(fd);
 	free(path);
 }

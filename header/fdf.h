@@ -6,7 +6,7 @@
 /*   By: aestraic <aestraic@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/05 15:58:50 by aestraic          #+#    #+#             */
-/*   Updated: 2022/12/09 11:58:17 by aestraic         ###   ########.fr       */
+/*   Updated: 2022/12/13 16:03:08 by aestraic         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,33 +53,35 @@ typedef struct s_readmap
 	int			delta;
 	int			offset_x;
 	int			offset_y;
-	int			center_x;
-	int			center_y;
-	int			center_z;
 	size_t		total_count;
 	int			**values_matrix;
+	int			**rgb_values;
 }			t_readmap;
+
 /**
  * Used for storing calculation values, dependng on the viewing angle.
  * @param angles Represents the viewing angle
  * @param matrix Stores the newly calculated values for of each node in 
- * 						3D representation in the form  [[x1,y1,z1],[x2,y2,z1],...]
- * 						, depending on the viewing angles and distance of the "camera(view point)"
+ * 						3D representation in the form  [[x1,y1,z1],[x2,y2,z1]]
+ * 						, depending on the viewing angles and 
+ * 							distance of the "camera(view point)"
  * @param b_x Represents the x-coordiante of the 2D-depiction of all nodes.
  * @param b_y Represents the y-coordiante of the 2D-depiction of all nodes.
  * @param cx Represents the x-coordiante of the camera.
  * @param cy Represents the y-coordiante of the camera..
- * @param cz Represents the y-coordiante of the camera..
+ * @param cz Represents the z-coordiante of the camera..
  * @param ex surface position relative to camera position cx
  * @param ey surface position relative to camera position cy
  * @param ez surface position relative to camera position cz
- * @param perspective flag to decide if displazed in parallel or perspective projection
- * 						1 means perspective projection.
+ * @param perspective flag to decide if displazed in parallel or
+ * 						 perspective projection. 
+ * 							1 means perspective projection.
 */
 typedef struct s_trans
 {
 	mlx_image_t	*img;
 	mlx_t		*mlx;
+	t_readmap	*map_data;
 	int			**matrix;
 	size_t		alpha;
 	size_t		beta;
@@ -96,35 +98,42 @@ typedef struct s_trans
 	int			perspective_projection;
 }			t_trans;
 
-
-//Initialize Map
+//Read maps and initialization
 size_t	ft_count_spaces(char *c);
 void	read_map_vertices(int fd, t_readmap *map_data);
 void	get_map_information(char *map_name, t_readmap *map_data);
-void	store_positions(char *line, t_readmap *map_data);
 void	xyz_pos(int fd, size_t row, size_t col, t_readmap *map_data);
 void	init_map(char *map_name, t_readmap *map_data, t_trans *transform);
-void 	init_mlx(mlx_image_t	*g_img,	mlx_t	*mlx, t_trans *trans);
+void	init_perspective(t_trans *transform, mlx_image_t *g_img);
+void	read_color(int fd, size_t row, size_t col, t_readmap *map_data);
 
 //Transform from 2D into 3D
-void	transformation(t_readmap *map_data, t_trans *trans);
-int		transform_x(t_trans *trans, int p_x,  int p_y,  int p_z);
-int		transform_y(t_trans *trans, int p_x,  int p_y,  int p_z);
-int		transform_z(t_trans *trans, int p_x,  int p_y,  int p_z);
-
+void	transformation(t_trans *t);
+int		transform_x(t_trans *trans, int p_x, int p_y, int p_z);
+int		transform_y(t_trans *trans, int p_x, int p_y, int p_z);
+int		transform_z(t_trans *trans, int p_x, int p_y, int p_z);
+void	calculate_xy(t_trans *transform, size_t node);
 //Utils
 void	find_max_nbr(size_t *array, t_readmap *map_data);
 void	fr_dblsgl_p(void **dbl, void *sgl, size_t c);
-int		get_rgba(int r, int g, int b, int a);
 void	determine_delta(t_readmap *map_data);
-void	determine_center(t_readmap *map_data);
 
 //Draw-Utils
-void	draw_image(mlx_image_t *g_img, t_readmap *map_data, t_trans *calc);
-void	hor_line(size_t node, t_readmap *map_data, mlx_image_t *g_img, t_trans *trans);
-void	ver_line(size_t node, t_readmap *map_data, mlx_image_t *g_img, t_trans *trans);
+void	draw_image(mlx_image_t *g_img, t_trans *calc);
+void	hor_line(size_t node, mlx_image_t *g_img, t_trans *trans);
+void	ver_line(size_t node, mlx_image_t *g_img, t_trans *trans);
 void	bresenham(mlx_image_t *g_img, int x0, int x1, int y0, int y1);
-void	draw_grid(t_readmap *map_data, t_trans *transform, mlx_image_t *g_img);
+void	draw_grid(t_trans *transform, mlx_image_t *g_img);
 void	ft_putpixel(mlx_image_t *image, uint32_t x, uint32_t y, uint32_t color);
+void	ft_putpixel2(size_t node, t_trans *t, int x, int y);
+//Hooks
+void	change_angles(mlx_t *mlx, t_trans *transform, mlx_image_t *g_img);
+void	make_new_image(t_trans *transform, mlx_image_t *g_img);
+void	hook(void *param);
+void	translate(mlx_t *mlx, t_trans *transform, mlx_image_t *g_img);
+void	perspective(mlx_t *mlx, t_trans *transform, mlx_image_t *g_img);
 
+//Colors
+int		*rgb_converter(char *str);
+int		get_rgba(int r, int g, int b, int a);
 #endif

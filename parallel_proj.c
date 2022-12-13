@@ -6,12 +6,11 @@
 /*   By: aestraic <aestraic@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/01 11:16:28 by aestraic          #+#    #+#             */
-/*   Updated: 2022/12/07 17:27:30 by aestraic         ###   ########.fr       */
+/*   Updated: 2022/12/10 16:18:55 by aestraic         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <fdf.h>
-
 /**
  * transforms the object's original coordinates from map_data
  * into 2D coordinates, which will be displazed on the screen,
@@ -30,9 +29,9 @@
 		 															sin(transform->beta * rad) * (sin(transform->gamma * rad) * (p_y - c_y) +\
 		 																							cos(transform->gamma * rad) * (p_x - c_x))) -\
 		 							sin(transform->alpha * rad) * (cos(transform->gamma * rad) * (p_y - c_y) -\
- 				
+size_t n is short for node.
 */
-void transformation(t_readmap *map_data, t_trans *trans)
+void transformation(t_trans *transform)
 {	
 	int		p_x;
 	int		p_y;
@@ -40,18 +39,18 @@ void transformation(t_readmap *map_data, t_trans *trans)
 	size_t	node;
 
 	node = 0;
-	while (node < map_data->total_count)
+	while (node < transform->map_data->total_count)
 	{
-		p_x = map_data->values_matrix[node][0];
-		p_y = map_data->values_matrix[node][1];
-		p_z = map_data->values_matrix[node][2] * (-5);
-		trans->matrix[node][0] = transform_x(trans, p_x, p_y, p_z);
-		trans->matrix[node][1] = transform_y(trans, p_x, p_y, p_z);
-		trans->matrix[node][2] = transform_z(trans, p_x, p_y, p_z);
-		trans->b_x[node] = trans->matrix[node][0]/trans->zoom + trans->ex;
-		trans->b_y[node] = trans->matrix[node][2]/trans->zoom + trans->ey;
-		// trans->b_x[node] = e_z * trans->matrix[node][0]/trans->matrix[node][2] + e_x;
-		// trans->b_y[node] = e_z * trans->matrix[node][1]/trans->matrix[node][2] + e_y;
+		p_x = transform->map_data->values_matrix[node][0];
+		p_y = transform->map_data->values_matrix[node][1];
+		p_z = transform->map_data->values_matrix[node][2] * (-5);
+		transform->matrix[node][0] = transform_x(transform, p_x, p_y, p_z);
+		transform->matrix[node][1] = transform_y(transform, p_x, p_y, p_z);
+		transform->matrix[node][2] = transform_z(transform, p_x, p_y, p_z);
+		calculate_xy(transform, node);
+		transform->map_data->values_matrix[node][0] = p_x;
+		transform->map_data->values_matrix[node][1] = p_y;
+		transform->map_data->values_matrix[node][2] = p_z/(-5);
 		node ++;
 	}
 }
@@ -94,4 +93,22 @@ int transform_z(t_trans *trans, int p_x,  int p_y,  int p_z)
 	sin(trans->alpha * rad) * (cos(trans->gamma * rad) * (p_y - trans->cy) -\
  	sin(trans->gamma * rad) * (p_x - trans->cx));
 	return (z);
+}
+
+void	calculate_xy(t_trans *transform, size_t node)
+{
+	if (transform->perspective_projection == 0)
+	{
+		transform->b_x[node] = transform->matrix[node][0] / transform->zoom + \
+		transform->ex;
+		transform->b_y[node] = transform->matrix[node][2] / transform->zoom + \
+		transform->ey;
+	}
+	else if (transform->perspective_projection == 1)
+	{
+		transform->b_x[node] = transform->matrix[node][0] * transform->ez / \
+		(transform->matrix[node][2] * transform->zoom) + transform->ex;
+		transform->b_y[node] = transform->matrix[node][1] * transform->ez / \
+		(transform->matrix[node][2] * transform->zoom) + transform->ey;
+	}
 }

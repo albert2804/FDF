@@ -6,38 +6,38 @@
 /*   By: aestraic <aestraic@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/22 18:10:46 by aestraic          #+#    #+#             */
-/*   Updated: 2022/12/09 11:58:13 by aestraic         ###   ########.fr       */
+/*   Updated: 2022/12/13 16:02:13 by aestraic         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <fdf.h>
 
-void	draw_image(mlx_image_t *g_img, t_readmap *map_data, t_trans *transform)
+void	draw_image(mlx_image_t *g_img, t_trans *transform)
 {
 	int		x;
 	int		y;
 	size_t	node;
 
 	node = 0;
-	while (node < map_data->total_count)
+	x = 0;
+	y = 0;
+	//(void)g_img;
+	while (node < transform->map_data->total_count)
 	{
 		x = transform->b_x[node];
 		y = transform->b_y[node];
-		ft_putpixel(g_img, x, y, get_rgba(255, 255, 255, 255));
+		ft_putpixel2(node, transform, x, y);
+		//ft_putpixel(g_img, x, y, get_rgba(255, 255, 255, 255));
 		node ++;
 	}
-	determine_center(map_data);
-	x = map_data->center_x;
-	y = map_data->center_y;
-	ft_putpixel(g_img, x, y, get_rgba(255, 255, 255, 255));
-	draw_grid(map_data, transform, g_img);
+	draw_grid(transform, g_img);
 }
 
 /**
  * draws horizontal gridlines for one row
  * @param node represents the nodenumber of startpoint
 */
-void	hor_line(size_t node, t_readmap *map_data, mlx_image_t *g_img, t_trans *trans)
+void	hor_line(size_t node, mlx_image_t *g_img, t_trans *trans)
 {
 	size_t	x0;
 	size_t	y0;
@@ -50,7 +50,7 @@ void	hor_line(size_t node, t_readmap *map_data, mlx_image_t *g_img, t_trans *tra
 	x1 = 0;
 	y1 = 0;
 	counter = 0;
-	while(counter < map_data->count_x - 1)
+	while (counter < trans->map_data->count_x - 1)
 	{
 		x0 = trans->b_x[node];
 		y0 = trans->b_y[node];
@@ -61,11 +61,12 @@ void	hor_line(size_t node, t_readmap *map_data, mlx_image_t *g_img, t_trans *tra
 		counter ++;
 	}
 }
+
 /**
  * draws vertical gridlines for one column
  * @param node represents the nodenumber of startpoint
 */
-void	ver_line(size_t node, t_readmap *map_data, mlx_image_t *g_img, t_trans *trans)
+void	ver_line(size_t node, mlx_image_t *g_img, t_trans *trans)
 {
 	size_t	x0;
 	size_t	y0;
@@ -78,34 +79,60 @@ void	ver_line(size_t node, t_readmap *map_data, mlx_image_t *g_img, t_trans *tra
 	x1 = 0;
 	y1 = 0;
 	counter = 0;
-	while(counter < map_data->count_y - 1)
+	while (counter < trans->map_data->count_y - 1)
 	{
 		x0 = trans->b_x[node];
 		y0 = trans->b_y[node];
-		x1 = trans->b_x[node + map_data->count_x];
-		y1 = trans->b_y[node + map_data->count_x];
+		x1 = trans->b_x[node + trans->map_data->count_x];
+		y1 = trans->b_y[node + trans->map_data->count_x];
 		bresenham(g_img, x0, x1, y0, y1);
-		node += map_data->count_x;
+		node += trans->map_data->count_x;
 		counter ++;
 	}
 }
+
 /**
  * draws a grid, first all horizontal lines, afterwards all vertical lines
 */
-void draw_grid(t_readmap *map_data, t_trans *transform, mlx_image_t *g_img)
+void	draw_grid(t_trans *transform, mlx_image_t *g_img)
 {
 	size_t	node;
-	
+	size_t	total_count;
+	size_t	count_x;
+	size_t	count_y;
+
+	total_count = transform->map_data->total_count;
+	count_x = transform->map_data->count_x;
+	count_y = transform->map_data->count_y;
 	node = 0;
-	while (node <= map_data->total_count - map_data->count_y)
+	while (node <= total_count - count_x)
 	{
-		hor_line(node, map_data, g_img, transform);
-		node += map_data->count_x;
+		hor_line(node, g_img, transform);
+		node += count_x;
 	}
 	node = 0;
-	while (node < map_data->count_x)
+	while (node < count_x)
 	{
-		ver_line(node, map_data, g_img, transform);
+		ver_line(node, g_img, transform);
 		node ++;
 	}
+}
+
+void	ft_putpixel(mlx_image_t *image, uint32_t x, uint32_t y, uint32_t color)
+{
+	if (x >= 0 && x < WIDTH && y >= 0 && y < HEIGHT)
+		mlx_put_pixel(image, x, y, color);
+}
+
+void	ft_putpixel2(size_t node, t_trans *t, int x, int y)
+{
+	int			*rgb;
+	int			color;
+	mlx_image_t	*image;
+	
+	image = t->img;
+	rgb = t->map_data->rgb_values[node];
+	color = get_rgba(rgb[0], rgb[1], rgb[2], 255);
+	if (x >= 0 && x < WIDTH && y >= 0 && y < HEIGHT)
+		mlx_put_pixel(image, x, y, color);
 }

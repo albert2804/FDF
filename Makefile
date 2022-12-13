@@ -6,7 +6,7 @@
 #    By: aestraic <aestraic@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/03/22 13:20:07 by aestraic          #+#    #+#              #
-#    Updated: 2022/12/07 11:42:16 by aestraic         ###   ########.fr        #
+#    Updated: 2022/12/13 12:49:45 by aestraic         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -20,6 +20,8 @@ SRC_TEST = 	test.c\
 			read.c\
 			utils1.c\
 			parallel_proj.c\
+			hooks.c\
+			colors.c\
 			draw.c
 
 OBJ   = $(SRC:.c=.o)
@@ -37,7 +39,7 @@ all:   library obj $(NAME)
 
 test: 
 	make library
-	cc $(C_FLAGS) -g -o test $(SRC_TEST) $(LIB_MLX) -I$(HEADER_PATH) -Llib -lft 
+	cc $(C_FLAGS) -g -Ofast -o test $(SRC_TEST) $(LIB_MLX) -I$(HEADER_PATH) -Llib -lft 
 
 obj: $(OBJ)
 
