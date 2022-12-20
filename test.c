@@ -6,7 +6,7 @@
 /*   By: aestraic <aestraic@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/16 14:36:03 by aestraic          #+#    #+#             */
-/*   Updated: 2022/12/13 15:15:31 by aestraic         ###   ########.fr       */
+/*   Updated: 2022/12/20 14:30:08 by aestraic         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,18 +17,15 @@
 */
 // int32_t	main(int argc, char **argv)
 // {
-// 	t_readmap		*map_data;
-// 	t_trans	*transform;
-
-// 	ft_printf("ARGC: %d\n",argc);
-// 	map_data = ft_calloc(sizeof(t_readmap), 1);
-// 	transform = ft_calloc(sizeof(t_trans), 1);
-// 	transform->b_x = ft_calloc(sizeof(int), map_data->total_count);
-// 	transform->b_y = ft_calloc(sizeof(int), map_data->total_count);
-// 	get_map_information(argv[1], map_data);
-
-// 	transformation(map_data, transform);
-
+// 	(void)argv;
+// 	(void)argc;	
+// 	char *str;
+// 	// str = "0xff00"
+// 	// str = "0xff"
+// 	str = "0xff0000";
+// 	int i;
+// 	i = ft_strlen(str) - 7;
+// 	ft_printf("%c", str[i]);
 // 	//system("leaks test");
 // 	return (EXIT_SUCCESS);
 // }
@@ -58,6 +55,6 @@ int32_t	main(int argc, char **argv)
 	fr_dblsgl_p((void **)map_data->values_matrix, NULL, map_data->total_count);
 	fr_dblsgl_p((void **)map_data->rgb_values, NULL, map_data->total_count);
 	free(map_data);
-	// system("leaks test"); 
+	system("leaks test");
 	return (EXIT_SUCCESS);
 }

@@ -6,7 +6,7 @@
 /*   By: aestraic <aestraic@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/07 12:11:40 by aestraic          #+#    #+#             */
-/*   Updated: 2022/12/10 16:24:07 by aestraic         ###   ########.fr       */
+/*   Updated: 2022/12/20 14:05:36 by aestraic         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,14 +26,11 @@ void	hook(void *param)
 	else if (mlx_is_key_down(mlx, MLX_KEY_LEFT_SHIFT))
 		change_angles(mlx, transform, g_img);
 	else if (mlx_is_key_down(mlx, MLX_KEY_TAB))
-	{
-		// ft_printf("\nE_X: %d\t e_y: %d \te_z:%d", transform->ex,transform->ey, transform->ez);
-		// ft_printf("\nC_X: %d\t C_Y: %d \tC_Z:%d", transform->cx,transform->cy, transform->cz);
-		// ft_printf("\nALPHA: %d\t BETA: %d \tGAMMA:%d", transform->alpha,transform->beta, transform->gamma);
 		perspective(mlx, transform, g_img);
-	}
 	else
 		translate(mlx, transform, g_img);
+	if (transform->zoom < 0.06)
+		transform->zoom = 0.06;
 }
 
 void	make_new_image(t_trans *transform, mlx_image_t *g_img)
@@ -65,10 +62,10 @@ void	change_angles(mlx_t *mlx, t_trans *transform, mlx_image_t *g_img)
 		transform->beta -= 5;
 	else if (mlx_is_key_down(mlx, MLX_KEY_KP_ADD))
 		transform->zoom -= 0.02;
-	if (transform->zoom < 0)
-		transform->zoom = 0.0001;
 	else if (mlx_is_key_down(mlx, MLX_KEY_KP_SUBTRACT))
 		transform->zoom += 0.02;
+	else
+		return ;
 	make_new_image(transform, g_img);
 }
 
@@ -84,10 +81,12 @@ void	translate(mlx_t *mlx, t_trans *transform, mlx_image_t *g_img)
 		transform->ex -= 10;
 	else if (mlx_is_key_down(mlx, MLX_KEY_RIGHT))
 		transform->ex += 10;
+	else
+		return ;
 	make_new_image(transform, g_img);
 }
 
-void perspective(mlx_t *mlx, t_trans *transform, mlx_image_t *g_img)
+void	perspective(mlx_t *mlx, t_trans *transform, mlx_image_t *g_img)
 {
 	if (mlx_is_key_down(mlx, MLX_KEY_RIGHT_CONTROL))
 		transform->cz += 10;
@@ -101,6 +100,7 @@ void perspective(mlx_t *mlx, t_trans *transform, mlx_image_t *g_img)
 		transform->cy += 10;
 	else if (mlx_is_key_down(mlx, MLX_KEY_DOWN))
 		transform->cy -= 10;
+	else
+		return ;
 	make_new_image(transform, g_img);
 }
-

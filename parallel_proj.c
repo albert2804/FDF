@@ -6,7 +6,7 @@
 /*   By: aestraic <aestraic@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/01 11:16:28 by aestraic          #+#    #+#             */
-/*   Updated: 2022/12/10 16:18:55 by aestraic         ###   ########.fr       */
+/*   Updated: 2022/12/20 14:23:59 by aestraic         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,23 +15,8 @@
  * transforms the object's original coordinates from map_data
  * into 2D coordinates, which will be displazed on the screen,
  * depending if it will be parallel or perspective projection.
- * 
- * keep this formulas, as plan B		
- * transform->matrix[node][0] = cos(transform->beta * rad) * (sin(transform->gamma * rad) * (p_y - c_y) +\
-											cos(transform->gamma * rad) * (p_x - c_x)) -\
-									sin(transform->beta * rad) * (p_z - c_z);
-		transform->matrix[node][1] = sin(transform->alpha * rad) * (cos(transform->beta * rad) * (p_z - c_z) +\
-																	sin(transform->beta * rad) * (sin(transform->gamma * rad) * (p_y - c_y) +\
-																									cos(transform->gamma * rad) * (p_x - c_x))) +\
-									cos(transform->alpha * rad) * (cos(transform->gamma * rad) * (p_y - c_y) -\
-																	sin(transform->gamma * rad) * (p_x - c_x));
-		transform->matrix[node][2] = cos(transform->alpha * rad) * (cos(transform->beta * rad) * (p_z - c_z) +\
-		 															sin(transform->beta * rad) * (sin(transform->gamma * rad) * (p_y - c_y) +\
-		 																							cos(transform->gamma * rad) * (p_x - c_x))) -\
-		 							sin(transform->alpha * rad) * (cos(transform->gamma * rad) * (p_y - c_y) -\
-size_t n is short for node.
 */
-void transformation(t_trans *transform)
+void	transformation(t_trans *transform)
 {	
 	int		p_x;
 	int		p_y;
@@ -50,48 +35,48 @@ void transformation(t_trans *transform)
 		calculate_xy(transform, node);
 		transform->map_data->values_matrix[node][0] = p_x;
 		transform->map_data->values_matrix[node][1] = p_y;
-		transform->map_data->values_matrix[node][2] = p_z/(-5);
+		transform->map_data->values_matrix[node][2] = p_z / (-5);
 		node ++;
 	}
 }
 
-int transform_x(t_trans *trans, int p_x,  int p_y,  int p_z)
+int	transform_x(t_trans *trans, int p_x, int p_y, int p_z)
 {
-	int x;
-	double rad;
-	
-	rad = ((M_PI/180));
-	x = cos(trans->beta * rad) * (sin(trans->gamma * rad) * (p_y - trans->cy) +\
+	int		x;
+	double	rad;
+
+	rad = ((M_PI / 180));
+	x = cos(trans->beta * rad) * (sin(trans->gamma * rad) * (p_y - trans->cy) + \
 	cos(trans->gamma * rad) * (p_x - trans->cx)) - sin(trans->beta * rad) * \
 	(p_z - trans->cz);
 	return (x);
 }
 
-int transform_y(t_trans *trans, int p_x,  int p_y,  int p_z)
+int	transform_y(t_trans *trans, int p_x, int p_y, int p_z)
 {
-	int y;
-	double rad;
+	int		y;
+	double	rad;
 
-	rad = ((M_PI/180));
-	y = sin(trans->alpha * rad) * (cos(trans->beta * rad) * (p_z - trans->cz) +\
-	sin(trans->beta * rad) * (sin(trans->gamma * rad) * (p_y - trans->cy) +\
+	rad = ((M_PI / 180));
+	y = sin(trans->alpha * rad) * (cos(trans->beta * rad) * (p_z - trans->cz) + \
+	sin(trans->beta * rad) * (sin(trans->gamma * rad) * (p_y - trans->cy) + \
 	cos(trans->gamma * rad) * (p_x - trans->cx))) + cos(trans->alpha * rad) * \
 	(cos(trans->gamma * rad) * (p_y - trans->cy) - sin(trans->gamma * rad) * \
 	(p_x - trans->cx));
 	return (y);
 }
 
-int transform_z(t_trans *trans, int p_x,  int p_y,  int p_z)
+int	transform_z(t_trans *trans, int p_x, int p_y, int p_z)
 {
-	int z;
-	double rad;
-	
-	rad = ((M_PI/180));
-	z = cos(trans->alpha * rad) * (cos(trans->beta * rad) * (p_z - trans->cz) +\
-	sin(trans->beta * rad) * (sin(trans->gamma * rad) * (p_y - trans->cy) +\
-	cos(trans->gamma * rad) * (p_x - trans->cx))) -\
-	sin(trans->alpha * rad) * (cos(trans->gamma * rad) * (p_y - trans->cy) -\
- 	sin(trans->gamma * rad) * (p_x - trans->cx));
+	int		z;
+	double	rad;
+
+	rad = ((M_PI / 180));
+	z = cos(trans->alpha * rad) * (cos(trans->beta * rad) * (p_z - trans->cz) + \
+	sin(trans->beta * rad) * (sin(trans->gamma * rad) * (p_y - trans->cy) + \
+	cos(trans->gamma * rad) * (p_x - trans->cx))) - \
+	sin(trans->alpha * rad) * (cos(trans->gamma * rad) * (p_y - trans->cy) - \
+	sin(trans->gamma * rad) * (p_x - trans->cx));
 	return (z);
 }
 

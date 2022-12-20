@@ -6,7 +6,7 @@
 /*   By: aestraic <aestraic@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/05 15:58:50 by aestraic          #+#    #+#             */
-/*   Updated: 2022/12/13 16:03:08 by aestraic         ###   ########.fr       */
+/*   Updated: 2022/12/20 14:29:24 by aestraic         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -95,6 +95,7 @@ typedef struct s_trans
 	int			cx;
 	int			cy;
 	int			cz;
+	int			color_gradient;
 	int			perspective_projection;
 }			t_trans;
 
@@ -114,7 +115,6 @@ int		transform_y(t_trans *trans, int p_x, int p_y, int p_z);
 int		transform_z(t_trans *trans, int p_x, int p_y, int p_z);
 void	calculate_xy(t_trans *transform, size_t node);
 //Utils
-void	find_max_nbr(size_t *array, t_readmap *map_data);
 void	fr_dblsgl_p(void **dbl, void *sgl, size_t c);
 void	determine_delta(t_readmap *map_data);
 
@@ -122,10 +122,10 @@ void	determine_delta(t_readmap *map_data);
 void	draw_image(mlx_image_t *g_img, t_trans *calc);
 void	hor_line(size_t node, mlx_image_t *g_img, t_trans *trans);
 void	ver_line(size_t node, mlx_image_t *g_img, t_trans *trans);
-void	bresenham(mlx_image_t *g_img, int x0, int x1, int y0, int y1);
+void	bresenham(size_t node0, size_t node1, int n_pixel, t_trans *t);
 void	draw_grid(t_trans *transform, mlx_image_t *g_img);
-void	ft_putpixel(mlx_image_t *image, uint32_t x, uint32_t y, uint32_t color);
-void	ft_putpixel2(size_t node, t_trans *t, int x, int y);
+bool	ft_putpixel(uint32_t x, uint32_t y, int color, t_trans *t);
+
 //Hooks
 void	change_angles(mlx_t *mlx, t_trans *transform, mlx_image_t *g_img);
 void	make_new_image(t_trans *transform, mlx_image_t *g_img);
@@ -136,4 +136,5 @@ void	perspective(mlx_t *mlx, t_trans *transform, mlx_image_t *g_img);
 //Colors
 int		*rgb_converter(char *str);
 int		get_rgba(int r, int g, int b, int a);
+int		*rgb_decider(char *str, int *digits);
 #endif

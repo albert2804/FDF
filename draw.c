@@ -6,7 +6,7 @@
 /*   By: aestraic <aestraic@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/22 18:10:46 by aestraic          #+#    #+#             */
-/*   Updated: 2022/12/13 16:02:13 by aestraic         ###   ########.fr       */
+/*   Updated: 2022/12/20 14:21:56 by aestraic         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,17 +17,20 @@ void	draw_image(mlx_image_t *g_img, t_trans *transform)
 	int		x;
 	int		y;
 	size_t	node;
+	int		color;
 
 	node = 0;
 	x = 0;
 	y = 0;
-	//(void)g_img;
+	(void)g_img;
 	while (node < transform->map_data->total_count)
 	{
+		color = get_rgba(transform->map_data->rgb_values[node][0], \
+						transform->map_data->rgb_values[node][1], \
+						transform->map_data->rgb_values[node][2], 255);
 		x = transform->b_x[node];
 		y = transform->b_y[node];
-		ft_putpixel2(node, transform, x, y);
-		//ft_putpixel(g_img, x, y, get_rgba(255, 255, 255, 255));
+		ft_putpixel(x, y, color, transform);
 		node ++;
 	}
 	draw_grid(transform, g_img);
@@ -39,24 +42,17 @@ void	draw_image(mlx_image_t *g_img, t_trans *transform)
 */
 void	hor_line(size_t node, mlx_image_t *g_img, t_trans *trans)
 {
-	size_t	x0;
-	size_t	y0;
-	size_t	x1;
-	size_t	y1;
 	size_t	counter;
+	int		n_pixel;
 
-	x0 = 0;
-	y0 = 0;
-	x1 = 0;
-	y1 = 0;
 	counter = 0;
+	n_pixel = 0;
+	(void)g_img;
 	while (counter < trans->map_data->count_x - 1)
 	{
-		x0 = trans->b_x[node];
-		y0 = trans->b_y[node];
-		x1 = trans->b_x[node + 1];
-		y1 = trans->b_y[node + 1];
-		bresenham(g_img, x0, x1, y0, y1);
+		n_pixel = sqrt(pow(abs(trans->b_x[node] - trans->b_x[node + 1]), 2) \
+				+ pow(abs(trans->b_y[node] - trans->b_y[node + 1]), 2));
+		bresenham(node, node + 1, n_pixel, trans);
 		node ++;
 		counter ++;
 	}
@@ -68,24 +64,19 @@ void	hor_line(size_t node, mlx_image_t *g_img, t_trans *trans)
 */
 void	ver_line(size_t node, mlx_image_t *g_img, t_trans *trans)
 {
-	size_t	x0;
-	size_t	y0;
-	size_t	x1;
-	size_t	y1;
 	size_t	counter;
+	int		n_pixel;
 
-	x0 = 0;
-	y0 = 0;
-	x1 = 0;
-	y1 = 0;
 	counter = 0;
+	n_pixel = 0;
+	(void)g_img;
 	while (counter < trans->map_data->count_y - 1)
 	{
-		x0 = trans->b_x[node];
-		y0 = trans->b_y[node];
-		x1 = trans->b_x[node + trans->map_data->count_x];
-		y1 = trans->b_y[node + trans->map_data->count_x];
-		bresenham(g_img, x0, x1, y0, y1);
+		n_pixel = sqrt(pow(abs(trans->b_x[node] - trans->b_x[node \
+		+ trans->map_data->count_x]), 2) \
+		+ pow(abs(trans->b_y[node] - trans->b_y[node \
+		+ trans->map_data->count_x]), 2));
+		bresenham(node, node + trans->map_data->count_x, n_pixel, trans);
 		node += trans->map_data->count_x;
 		counter ++;
 	}
@@ -118,21 +109,11 @@ void	draw_grid(t_trans *transform, mlx_image_t *g_img)
 	}
 }
 
-void	ft_putpixel(mlx_image_t *image, uint32_t x, uint32_t y, uint32_t color)
-{
+bool	ft_putpixel(uint32_t x, uint32_t y, int color, t_trans *t)
+{	
 	if (x >= 0 && x < WIDTH && y >= 0 && y < HEIGHT)
-		mlx_put_pixel(image, x, y, color);
-}
-
-void	ft_putpixel2(size_t node, t_trans *t, int x, int y)
-{
-	int			*rgb;
-	int			color;
-	mlx_image_t	*image;
-	
-	image = t->img;
-	rgb = t->map_data->rgb_values[node];
-	color = get_rgba(rgb[0], rgb[1], rgb[2], 255);
-	if (x >= 0 && x < WIDTH && y >= 0 && y < HEIGHT)
-		mlx_put_pixel(image, x, y, color);
+		mlx_put_pixel(t->img, x, y, color);
+	else
+		return (false);
+	return (true);
 }

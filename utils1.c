@@ -6,7 +6,7 @@
 /*   By: aestraic <aestraic@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/22 15:17:27 by aestraic          #+#    #+#             */
-/*   Updated: 2022/12/13 16:02:50 by aestraic         ###   ########.fr       */
+/*   Updated: 2022/12/20 14:54:16 by aestraic         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,36 +30,6 @@ void	fr_dblsgl_p(void **dbl, void *sgl, size_t c)
 	free(dbl);
 	if (sgl != NULL)
 		free(sgl);
-}
-
-int	get_rgba(int r, int g, int b, int a)
-{
-		return (r << 24 | g << 16 | b << 8 | a);
-}
-
-/**
- * finds the maximum number within an size_t array and stores it in 
- * the map_data struct
- * 
- * ----->!!!NEEDS to be IMPROVED, only works for positive numbers!!!
- * 
-*/
-void	find_max_nbr(size_t *array, t_readmap *map_data)
-{
-	size_t	i;
-	size_t	max_value;
-
-	i = 0;
-	max_value = array[i];
-	if (array == NULL)
-		max_value = -1;
-	while (array[i] != 0)
-	{
-		if (array[i] > max_value)
-			max_value = array[i];
-		i ++;
-	}
-	map_data->max_xy = max_value;
 }
 
 /**
@@ -91,49 +61,61 @@ void	determine_delta(t_readmap *map_data)
 }
 
 /**
- * calculates the center coordinates of the map
-*/
-// void	determine_center(t_readmap *map_data)
-// {
-// 	map_data->center_x = map_data->offset_x + \
-// 						(map_data->delta * (map_data->count_x - 1)) / 2;
-// 	map_data->center_y = map_data->offset_y + \
-// 						(map_data->delta * (map_data->count_y  - 1)) / 2;
-// }
-
-/**
  * bresenham from wikipedia
 */
-void bresenham(mlx_image_t *g_img, int x0, int x1, int y0, int y1)
+void	bresenham(size_t node0, size_t node1, int n_pixel, t_trans *t)
 {
-	int dx;
-	int sx;
-	int dy;
-	int sy;
-	int error;
-	int e2;
+	int	*rgb0;
+	int	*rgb1;
+	int	gr[3];
+	int	i;
+	//int	arr[10];
 	
+	int	dx;
+	int	sx;
+	int	dy;
+	int	sy;
+	int	error;
+	int	e2;
+	int	x0;
+	int	x1;
+	int	y0;
+	int	y1;
+
+	i = 0;
+	x0 = t->b_x[node0];
+	x1 = t->b_x[node1];
+	y0 = t->b_y[node0];
+	y1 = t->b_y[node1];
+	rgb0 = t->map_data->rgb_values[node0];
+	rgb1 = t->map_data->rgb_values[node1];
+	n_pixel = n_pixel + 1;
+	gr[0] = (rgb1[0] - rgb0[0]) / n_pixel;
+	gr[1] = (rgb1[1] - rgb0[1]) / n_pixel;
+	gr[2] = (rgb1[2] - rgb0[2]) / n_pixel;
 	dx = abs(x1 - x0);
-    sx = x0 < x1 ? 1 : -1;
-    dy = -abs(y1 - y0);
-    sy = y0 < y1 ? 1 : -1;
-    error = dx + dy;
-    while (true)
+	sx = x0 < x1 ? 1 : -1;
+	dy = -abs(y1 - y0);
+	sy = y0 < y1 ? 1 : -1;
+	error = dx + dy;
+	while (true)
 	{
-		ft_putpixel(g_img, x0, y0, get_rgba(255, 255, 255, 255));
-		if (x0 == x1 && y0 == y1)
+		i ++;
+		if ((x0 == x1 && y0 == y1) \
+		|| (!ft_putpixel(x0, y0, get_rgba(rgb0[0] + (gr[0] * i), \
+			rgb0[1] + (gr[1] * i), rgb0[2] + (gr[2] * i), 255), t)))
 			break ;
 		e2 = 2 * error;
 		if (e2 >= dy)
 		{
-			if (x0 == x1) 
+			if (x0 == x1)
 				break ;
 			error = error + dy;
 			x0 = x0 + sx;
 		}
 		if (e2 <= dx)
 		{
-			if (y0 == y1) 
+			if (y0 == y1)
 				break ;
 			error = error + dx;
 			y0 = y0 + sy;
@@ -161,6 +143,7 @@ void	init_map(char *map_name, t_readmap *map_data, t_trans *transform)
 	transform->alpha = 55 + 90;
 	transform->beta = 0 + 180;
 	transform->gamma = -45 + 180;
+	transform->color_gradient = 1;
 	transform->perspective_projection = 0;
 	transform->mlx = mlx_init(WIDTH, HEIGHT, "MLX42", true);
 	if (!transform->mlx)
@@ -173,9 +156,9 @@ void	init_perspective(t_trans *transform, mlx_image_t *g_img)
 	if (transform->perspective_projection == 0)
 	{
 		transform->perspective_projection = 1;
-		transform->cx = 2650;
-		transform->cy = 2000;
-		transform->cz = -3000;
+		transform->cx = 1800;
+		transform->cy = 1500;
+		transform->cz = -2500;
 		transform->zoom = 0.5;
 		transform->alpha = 215;
 		transform->beta = 180;
@@ -186,6 +169,7 @@ void	init_perspective(t_trans *transform, mlx_image_t *g_img)
 		transform->perspective_projection = 0;
 		transform->cx = 600;
 		transform->cy = 600;
+		transform->ey = 600;
 		transform->cz = 0;
 		transform->zoom = 1.5;
 		transform->alpha = 55 + 90;
