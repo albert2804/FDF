@@ -6,7 +6,7 @@
 /*   By: aestraic <aestraic@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/05 15:58:50 by aestraic          #+#    #+#             */
-/*   Updated: 2022/12/20 14:29:24 by aestraic         ###   ########.fr       */
+/*   Updated: 2022/12/21 15:08:01 by aestraic         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,9 +25,10 @@
 # include <limits.h>
 # include <memory.h>
 # include <math.h>
+# include <stdbool.h>
 
 # include <libft.h>
-# include "../mlx/include/MLX42/MLX42.h"
+# include "../MLX42/include/MLX42/MLX42.h"
 
 //STRUCTS
 /**
@@ -76,6 +77,7 @@ typedef struct s_readmap
  * @param perspective flag to decide if displazed in parallel or
  * 						 perspective projection. 
  * 							1 means perspective projection.
+ * @param arr[10] array needed for bresenham variables.
 */
 typedef struct s_trans
 {
@@ -97,9 +99,10 @@ typedef struct s_trans
 	int			cz;
 	int			color_gradient;
 	int			perspective_projection;
+	int			arr[11];
 }			t_trans;
 
-//Read maps and initialization
+//Read maps
 size_t	ft_count_spaces(char *c);
 void	read_map_vertices(int fd, t_readmap *map_data);
 void	get_map_information(char *map_name, t_readmap *map_data);
@@ -107,6 +110,8 @@ void	xyz_pos(int fd, size_t row, size_t col, t_readmap *map_data);
 void	init_map(char *map_name, t_readmap *map_data, t_trans *transform);
 void	init_perspective(t_trans *transform, mlx_image_t *g_img);
 void	read_color(int fd, size_t row, size_t col, t_readmap *map_data);
+bool	input_handling(int argc, char **argv);
+void	controls(void);
 
 //Transform from 2D into 3D
 void	transformation(t_trans *t);
@@ -114,15 +119,23 @@ int		transform_x(t_trans *trans, int p_x, int p_y, int p_z);
 int		transform_y(t_trans *trans, int p_x, int p_y, int p_z);
 int		transform_z(t_trans *trans, int p_x, int p_y, int p_z);
 void	calculate_xy(t_trans *transform, size_t node);
+
 //Utils
 void	fr_dblsgl_p(void **dbl, void *sgl, size_t c);
 void	determine_delta(t_readmap *map_data);
+bool	equal(int a, int b, int c, int d);
+
+//Bresenham
+int		bigysmall(int x, int y);
+void	init_bresenham(t_trans *t, int node0, int node1);
+void	bresenham(size_t node0, size_t node1, int n_pixel, t_trans *t);
+bool	error_x(t_trans *t);
+bool	error_y(t_trans *t);
 
 //Draw-Utils
 void	draw_image(mlx_image_t *g_img, t_trans *calc);
 void	hor_line(size_t node, mlx_image_t *g_img, t_trans *trans);
 void	ver_line(size_t node, mlx_image_t *g_img, t_trans *trans);
-void	bresenham(size_t node0, size_t node1, int n_pixel, t_trans *t);
 void	draw_grid(t_trans *transform, mlx_image_t *g_img);
 bool	ft_putpixel(uint32_t x, uint32_t y, int color, t_trans *t);
 
@@ -132,6 +145,7 @@ void	make_new_image(t_trans *transform, mlx_image_t *g_img);
 void	hook(void *param);
 void	translate(mlx_t *mlx, t_trans *transform, mlx_image_t *g_img);
 void	perspective(mlx_t *mlx, t_trans *transform, mlx_image_t *g_img);
+void	effect(t_trans *transform, mlx_image_t *g_img);
 
 //Colors
 int		*rgb_converter(char *str);

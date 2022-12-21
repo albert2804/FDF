@@ -6,7 +6,7 @@
 /*   By: aestraic <aestraic@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/22 18:10:46 by aestraic          #+#    #+#             */
-/*   Updated: 2022/12/20 14:21:56 by aestraic         ###   ########.fr       */
+/*   Updated: 2022/12/21 11:43:48 by aestraic         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,7 +51,7 @@ void	hor_line(size_t node, mlx_image_t *g_img, t_trans *trans)
 	while (counter < trans->map_data->count_x - 1)
 	{
 		n_pixel = sqrt(pow(abs(trans->b_x[node] - trans->b_x[node + 1]), 2) \
-				+ pow(abs(trans->b_y[node] - trans->b_y[node + 1]), 2));
+				+ pow(abs(trans->b_y[node] - trans->b_y[node + 1]), 2)) + 1;
 		bresenham(node, node + 1, n_pixel, trans);
 		node ++;
 		counter ++;
@@ -75,7 +75,7 @@ void	ver_line(size_t node, mlx_image_t *g_img, t_trans *trans)
 		n_pixel = sqrt(pow(abs(trans->b_x[node] - trans->b_x[node \
 		+ trans->map_data->count_x]), 2) \
 		+ pow(abs(trans->b_y[node] - trans->b_y[node \
-		+ trans->map_data->count_x]), 2));
+		+ trans->map_data->count_x]), 2)) + 1;
 		bresenham(node, node + trans->map_data->count_x, n_pixel, trans);
 		node += trans->map_data->count_x;
 		counter ++;

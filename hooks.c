@@ -6,7 +6,7 @@
 /*   By: aestraic <aestraic@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/07 12:11:40 by aestraic          #+#    #+#             */
-/*   Updated: 2022/12/20 14:05:36 by aestraic         ###   ########.fr       */
+/*   Updated: 2022/12/21 12:56:55 by aestraic         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,6 +27,8 @@ void	hook(void *param)
 		change_angles(mlx, transform, g_img);
 	else if (mlx_is_key_down(mlx, MLX_KEY_TAB))
 		perspective(mlx, transform, g_img);
+	else if (mlx_is_key_down(mlx, MLX_KEY_1))
+		effect(transform, g_img);
 	else
 		translate(mlx, transform, g_img);
 	if (transform->zoom < 0.06)
