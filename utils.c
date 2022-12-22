@@ -6,7 +6,7 @@
 /*   By: aestraic <aestraic@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/22 15:17:27 by aestraic          #+#    #+#             */
-/*   Updated: 2022/12/21 13:21:32 by aestraic         ###   ########.fr       */
+/*   Updated: 2022/12/22 14:52:13 by aestraic         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,7 @@ void	fr_dblsgl_p(void **dbl, void *sgl, size_t c)
 	while (i < c)
 		free(dbl[i++]);
 	free(dbl);
-	if (sgl != NULL)
+	if (sgl)
 		free(sgl);
 }
 

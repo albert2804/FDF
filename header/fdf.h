@@ -6,7 +6,7 @@
 /*   By: aestraic <aestraic@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/05 15:58:50 by aestraic          #+#    #+#             */
-/*   Updated: 2022/12/21 15:08:01 by aestraic         ###   ########.fr       */
+/*   Updated: 2022/12/22 15:23:40 by aestraic         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -124,6 +124,7 @@ void	calculate_xy(t_trans *transform, size_t node);
 void	fr_dblsgl_p(void **dbl, void *sgl, size_t c);
 void	determine_delta(t_readmap *map_data);
 bool	equal(int a, int b, int c, int d);
+char	*trim(char **line);
 
 //Bresenham
 int		bigysmall(int x, int y);

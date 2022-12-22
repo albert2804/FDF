@@ -6,7 +6,7 @@
 /*   By: aestraic <aestraic@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/16 12:15:28 by aestraic          #+#    #+#             */
-/*   Updated: 2022/12/21 12:26:18 by aestraic         ###   ########.fr       */
+/*   Updated: 2022/12/22 15:36:13 by aestraic         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,22 +15,37 @@
 size_t	ft_count_spaces(char *c)
 {
 	size_t	count;
-	size_t	i;
+	char	**str;
 
 	count = 0;
-	i = 0;
 	if (c == NULL)
 		return (0);
-	while (c[i] == ' ')
-		i ++;
-	while (c[i] != '\0')
-	{
-		if (c[i] == ' ' && c[i + 1] != ' ')
-			count++;
-		i++;
-	}
+	c = ft_strtrim(c, "\n, ");
+	str = ft_split(c, ' ');
+	while (str[count])
+		count ++;
+	fr_dblsgl_p((void **)str, c, count);
 	return (count);
 }
+// size_t	ft_count_spaces(char *c)
+// {
+// 	size_t	count;
+// 	size_t	i;
+
+// 	count = 0;
+// 	i = 0;
+// 	if (c == NULL)
+// 		return (0);
+// 	while (c[i] == ' ')
+// 		i ++;
+// 	while (c[i] != '\0')
+// 	{
+// 		if (c[i] == ' ' && c[i + 1] != ' ')
+// 			count++;
+// 		i++;
+// 	}
+// 	return (count);
+// }
 
 /*
 reads the amount of lines and columns (eckpunkte) 
@@ -45,11 +60,12 @@ void	read_map_vertices(int fd, t_readmap *map_data)
 	i = ft_calloc(sizeof(size_t), 2);
 	j = 1;
 	line = get_next_line(fd);
-	i[0] = ft_count_spaces(line) + 1;
+	i[0] = ft_count_spaces(line);
 	free(line);
 	while (j)
 	{
 		line = get_next_line(fd);
+		line = trim(&line);
 		if (ft_strlen_gnl(line) == 0)
 		{
 			free(line);
@@ -84,20 +100,20 @@ void	xyz_pos(int fd, size_t row, size_t col, t_readmap *map_data)
 
 	node = 0;
 	matrix = ft_calloc(sizeof(int *), map_data->total_count);
-	while (row < map_data->count_y)
+	while (row ++ < map_data->count_y)
 	{
 		line = get_next_line(fd);
+		line = trim(&line);
 		split = ft_split(line, ' ');
 		col = 0;
 		while (col < map_data->count_x)
 		{
 			values = ft_calloc(sizeof(int), 3);
 			values[0] = map_data->offset_x + col * map_data->delta;
-			values[1] = map_data->offset_y + row * map_data->delta;
+			values[1] = map_data->offset_y + (row - 1) * map_data->delta;
 			values[2] = ft_atoi(split[col++]);
 			matrix[node ++] = values;
 		}
-		row ++;
 		fr_dblsgl_p((void **)split, (void *)line, map_data->count_x);
 	map_data->values_matrix = matrix;
 	}

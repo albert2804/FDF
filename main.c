@@ -6,7 +6,7 @@
 /*   By: aestraic <aestraic@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/16 14:36:03 by aestraic          #+#    #+#             */
-/*   Updated: 2022/12/21 14:06:21 by aestraic         ###   ########.fr       */
+/*   Updated: 2022/12/22 14:50:47 by aestraic         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,6 +35,7 @@ int32_t	main(int argc, char **argv)
 	mlx_terminate(mlx);
 	fr_dblsgl_p((void **)map_data->values_matrix, NULL, map_data->total_count);
 	fr_dblsgl_p((void **)map_data->rgb_values, NULL, map_data->total_count);
+	system("leaks fdf");
 	free(map_data);
 	return (EXIT_SUCCESS);
 }

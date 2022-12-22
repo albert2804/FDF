@@ -6,7 +6,7 @@
 /*   By: aestraic <aestraic@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/13 12:49:03 by aestraic          #+#    #+#             */
-/*   Updated: 2022/12/20 14:32:08 by aestraic         ###   ########.fr       */
+/*   Updated: 2022/12/22 15:25:25 by aestraic         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,6 +29,7 @@ void	read_color(int fd, size_t row, size_t i, t_readmap *map_data)
 	{
 		i = 0;
 		line = get_next_line(fd);
+		line = trim(&line);
 		split = ft_split(line, ' ');
 		while (split[i] != NULL)
 			rgb_values[node ++] = rgb_converter(split[i ++]);
@@ -95,4 +96,13 @@ int	*rgb_decider(char *str, int *digits)
 int	get_rgba(int r, int g, int b, int a)
 {
 	return (r << 24 | g << 16 | b << 8 | a);
+}
+
+char	*trim(char **line)
+{
+	char	*tmp;
+
+	tmp = ft_strtrim(*line, "\n, ");
+	free(*line);
+	return (tmp);
 }
