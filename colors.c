@@ -6,7 +6,7 @@
 /*   By: aestraic <aestraic@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/13 12:49:03 by aestraic          #+#    #+#             */
-/*   Updated: 2022/12/22 15:25:25 by aestraic         ###   ########.fr       */
+/*   Updated: 2022/12/22 17:52:18 by aestraic         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@
  * in hexa and transforms it into RGB. The values will be stored in 
  * the map_data struct inside map_data->colors_matrix.
 */
-void	read_color(int fd, size_t row, size_t i, t_readmap *map_data)
+void	read_color(int fd, size_t row, size_t i, t_readmap *md)
 {
 	char	*line;
 	int		**rgb_values;
@@ -24,25 +24,30 @@ void	read_color(int fd, size_t row, size_t i, t_readmap *map_data)
 	int		node;
 
 	node = 0;
-	rgb_values = ft_calloc(sizeof(int *), map_data->total_count);
-	while (row < map_data->count_y)
+	rgb_values = ft_calloc(sizeof(int *), md->total_count);
+	if (!rgb_values)
+		free_rgbv(md);
+	while (row < md->count_y)
 	{
 		i = 0;
 		line = get_next_line(fd);
 		line = trim(&line);
 		split = ft_split(line, ' ');
 		while (split[i] != NULL)
-			rgb_values[node ++] = rgb_converter(split[i ++]);
+		{
+			rgb_values[node ++] = rgb_converter(i, split[i], rgb_values, md);
+			i ++;
+		}
 		row ++;
-		fr_dblsgl_p((void **)split, (void *)line, map_data->count_x);
+		fr_dblsgl_p((void **)split, (void *)line, md->count_x);
 	}
-	map_data->rgb_values = rgb_values;
+	md->rgb_values = rgb_values;
 }
 
 /**
  * calculates the rgb-values of the nodes, which are read in from test-maps
 */
-int	*rgb_converter(char *str)
+int	*rgb_converter(int i, char *str, int **rgb_values, t_readmap *md)
 {
 	int	*digits;
 	int	*rgb;
@@ -50,9 +55,13 @@ int	*rgb_converter(char *str)
 	if (str[ft_strlen(str) - 1] == '\n')
 		str[ft_strlen(str) - 1] = '\0';
 	rgb = ft_calloc(sizeof(int), 3);
+	if (!rgb)
+		free_rgbc(md, rgb_values, i);
 	if (ft_strchr(str, 'x') == 0)
 		return (rgb[0] = 255, rgb[1] = 255, rgb[2] = 255, rgb);
 	digits = ft_calloc(sizeof(int), 6);
+	if (!digits)
+		free_digits(md, rgb_values, i, rgb);
 	digits = rgb_decider(str, digits);
 	rgb[0] = (digits[0] * 16 + digits[1]);
 	rgb[1] = (digits[2] * 16 + digits[3]);

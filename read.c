@@ -6,7 +6,7 @@
 /*   By: aestraic <aestraic@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/16 12:15:28 by aestraic          #+#    #+#             */
-/*   Updated: 2022/12/22 15:36:13 by aestraic         ###   ########.fr       */
+/*   Updated: 2022/12/22 18:26:29 by aestraic         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,7 +57,7 @@ void	read_map_vertices(int fd, t_readmap *map_data)
 	size_t	j;
 	char	*line;
 
-	i = ft_calloc(sizeof(size_t), 2);
+	i = cal_vertices(map_data);
 	j = 1;
 	line = get_next_line(fd);
 	i[0] = ft_count_spaces(line);
@@ -99,7 +99,7 @@ void	xyz_pos(int fd, size_t row, size_t col, t_readmap *map_data)
 	int		node;
 
 	node = 0;
-	matrix = ft_calloc(sizeof(int *), map_data->total_count);
+	matrix = cal_matrix(map_data);
 	while (row ++ < map_data->count_y)
 	{
 		line = get_next_line(fd);
@@ -108,7 +108,7 @@ void	xyz_pos(int fd, size_t row, size_t col, t_readmap *map_data)
 		col = 0;
 		while (col < map_data->count_x)
 		{
-			values = ft_calloc(sizeof(int), 3);
+			values = cal_values(map_data, matrix, row);
 			values[0] = map_data->offset_x + col * map_data->delta;
 			values[1] = map_data->offset_y + (row - 1) * map_data->delta;
 			values[2] = ft_atoi(split[col++]);

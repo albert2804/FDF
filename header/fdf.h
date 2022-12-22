@@ -6,7 +6,7 @@
 /*   By: aestraic <aestraic@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/05 15:58:50 by aestraic          #+#    #+#             */
-/*   Updated: 2022/12/22 15:23:40 by aestraic         ###   ########.fr       */
+/*   Updated: 2022/12/22 18:25:17 by aestraic         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -109,7 +109,7 @@ void	get_map_information(char *map_name, t_readmap *map_data);
 void	xyz_pos(int fd, size_t row, size_t col, t_readmap *map_data);
 void	init_map(char *map_name, t_readmap *map_data, t_trans *transform);
 void	init_perspective(t_trans *transform, mlx_image_t *g_img);
-void	read_color(int fd, size_t row, size_t col, t_readmap *map_data);
+void	read_color(int fd, size_t row, size_t col, t_readmap *md);
 bool	input_handling(int argc, char **argv);
 void	controls(void);
 
@@ -149,7 +149,23 @@ void	perspective(mlx_t *mlx, t_trans *transform, mlx_image_t *g_img);
 void	effect(t_trans *transform, mlx_image_t *g_img);
 
 //Colors
-int		*rgb_converter(char *str);
+int		*rgb_converter( int i, char *str, int **rgb_values, t_readmap *md);
 int		get_rgba(int r, int g, int b, int a);
 int		*rgb_decider(char *str, int *digits);
+
+//Allocations
+int		**cal_matrix(t_readmap *map_data);
+int		*cal_values(t_readmap *map_data, int **matrix, size_t row);
+size_t	*cal_vertices(t_readmap *map_data);
+void	free_map_data(t_trans *transform);
+void	free_bx(t_readmap *map_data, t_trans *trans);
+void	free_by(t_readmap *map_data, t_trans *trans, int *bx);
+void	free_mlx(t_readmap *map_data, t_trans *trans, int *bx);
+void	free_matrix(t_readmap *map_data);
+void	free_vertices(t_readmap *map_data);
+void	free_values(t_readmap *map_data, int **matrix, int row);
+void	free_rgbv(t_readmap *map_data);
+void	free_rgbc(t_readmap *map_data, int **rgb_values, int count);
+void	free_digits(t_readmap *map_data, int **rgb_values, int count, int *rgb);
+
 #endif

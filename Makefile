@@ -6,19 +6,22 @@
 #    By: aestraic <aestraic@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/03/22 13:20:07 by aestraic          #+#    #+#              #
-#    Updated: 2022/12/22 15:50:46 by aestraic         ###   ########.fr        #
+#    Updated: 2022/12/22 18:35:13 by aestraic         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 NAME = fdf
 SRC = 	main.c\
 		read.c\
-		utils.c\
+		utils1.c\
+		utils2.c\
 		bresenham.c\
 		parallel_proj.c\
 		input.c\
 		hooks.c\
 		colors.c\
+		mem1.c\
+		mem2.c\
 		draw.c
 
 OBJ  = $(SRC:.c=.o)
