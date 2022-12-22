@@ -6,7 +6,7 @@
 #    By: aestraic <aestraic@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/03/22 13:20:07 by aestraic          #+#    #+#              #
-#    Updated: 2022/12/21 15:38:22 by aestraic         ###   ########.fr        #
+#    Updated: 2022/12/22 15:50:46 by aestraic         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -82,6 +82,7 @@ fclean: clean
 	@make fclean -C $(SRC_PATH)/libft
 	@make fclean -C $(SRC_PATH)/ft_printf
 	@make fclean -C $(SRC_PATH)/gnl
+	@-make fclean -C $(MLX_DIR)
 	@rm -f $(NAME) $(BONUS)
 	@echo Libraries and exeutables removed
 	
