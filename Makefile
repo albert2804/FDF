@@ -6,9 +6,16 @@
 #    By: aestraic <aestraic@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/03/22 13:20:07 by aestraic          #+#    #+#              #
-#    Updated: 2022/12/22 18:35:13 by aestraic         ###   ########.fr        #
+#    Updated: 2023/05/14 15:10:42 by aestraic         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
+
+## INSTALL MLX
+## After the MLX42 directory is downloaded,
+## - cd MLX42
+## - mkdir build
+## - cd build
+## cmake && make, so that the libmlx42.a is produced.
 
 NAME = fdf
 SRC = 	main.c\
@@ -33,11 +40,11 @@ OBJ_PATH = obj
 LIB_PATH = lib
 MAP_PATH = test_maps
 LIB = $(LIB_PATH)/libft.a
-LIB_MLX = ./$(MAKE_MLX) -lglfw  -L $(INST_GLFW)\
+LIB_MLX = ./$(MAKE_MLX_LIB) -lglfw  -L $(INST_GLFW)\
 	-framework Cocoa -framework OpenGL -framework IOKit
 
 MLX_DIR = MLX42/
-MAKE_MLX = $(MLX_DIR)libmlx42.a
+MAKE_MLX_LIB = $(MLX_DIR)build/libmlx42.a
 INST_GLFW = /Users/$(USER)/.brew/opt/glfw/lib/
 INST_BREW = /Users/$(USER)/.brewconfig.zsh
 
@@ -46,7 +53,7 @@ all: $(NAME)
 %.o : %.c
 	gcc $(C_FLAGS) -I$(HEADER_PATH) -c $^
 	
-$(NAME): $(INST_BREW) $(INST_GLFW) $(MAKE_MLX) $(LIB) $(OBJ) $(MAP_PATH)
+$(NAME): $(INST_BREW) $(INST_GLFW) $(MAKE_MLX_LIB) $(LIB) $(OBJ) $(MAP_PATH)
 	gcc $(C_FLAGS) -Ofast -o $(NAME) $(SRC) $(LIB_MLX) -I$(HEADER_PATH) -Llib -lft 
 
 $(LIB):
@@ -55,8 +62,11 @@ $(LIB):
 	@make all -C	$(SRC_PATH)/ft_printf
 	@make all -C	$(SRC_PATH)/gnl
 
-$(MAKE_MLX): $(MLX_DIR)
-	make -C $(MLX_DIR)
+$(MAKE_MLX_LIB): $(MLX_DIR)
+	@mkdir -p $(MLX_DIR)build		
+	@cmake -B $(MLX_DIR)build $(MLX_DIR)
+#cmake -B<path-to-build> -S<path-to-source(CMakeLists.txt)>
+	@make -C $(MLX_DIR)build
 $(MLX_DIR):
 	@echo Cloning MLX42
 	git clone https://github.com/codam-coding-college/MLX42.git
@@ -68,7 +78,7 @@ $(INST_BREW):
 	@curl -fsSL https://rawgit.com/kube/42homebrew/master/install.sh | zsh
 	@source ~/.zshrc
 $(MAP_PATH):
-	@curl -fsSL https://projects.intra.42.fr/uploads/document/document/9222/maps.zip | tar -xz 
+	@curl -fsSL https://cdn.intra.42.fr/document/document/13499/maps.zip | tar -xz 
 	@rm -rf __MACOSX
 
 val:
@@ -85,13 +95,15 @@ fclean: clean
 	@make fclean -C $(SRC_PATH)/libft
 	@make fclean -C $(SRC_PATH)/ft_printf
 	@make fclean -C $(SRC_PATH)/gnl
-	@-make fclean -C $(MLX_DIR)
 	@rm -f $(NAME) $(BONUS)
 	@echo Libraries and exeutables removed
+
+aclean: fclean
+	@rm -rf test_maps
+	@rm -rf MLX42
+	@echo Maps and MLX removed
 	
 re: fclean all
 	@echo REDONE
 
-.PHONY: clean fclean re all bonus val
-
-https://projects.intra.42.fr/uploads/document/document/9222/maps.zip
+.PHONY: clean fclean aclean re all bonus val
